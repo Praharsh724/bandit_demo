@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -21,11 +22,15 @@ jobs:
       - name: Install Bandit
         run: pip install bandit
 
-      - name: Run Bandit
-        run: bandit -r . -f json -o bandit-report.json
+      - name: Run Bandit and Fail on High Severity
+        run: |
+          bandit -r . --severity-level high -f json -o bandit-report.json || exit 1
+          bandit -r . -f html -o bandit-report.html
 
-      - name: Upload Report
-        uses: actions/upload-artifact@v3
+      - name: Upload Reports
+        uses: actions/upload-artifact@v4
         with:
-          name: bandit-security-report
-          path: bandit-report.json
+          name: bandit-security-reports
+          path: |
+            bandit-report.json
+            bandit-report.html
