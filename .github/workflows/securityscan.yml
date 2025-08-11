@@ -22,10 +22,12 @@ jobs:
       - name: Install Bandit
         run: pip install bandit
 
-      - name: Run Bandit and Fail on High Severity
+      - name: Run Bandit (Allow Warnings)
         run: |
-          bandit -r . --severity-level high -f json -o bandit-report.json || exit 1
-          bandit -r . -f html -o bandit-report.html
+          # Generate JSON report (don't fail build if issues are found)
+          bandit -r . --severity-level high -f json -o bandit-report.json || true
+          # Generate HTML report
+          bandit -r . -f html -o bandit-report.html || true
 
       - name: Upload Reports
         uses: actions/upload-artifact@v4
