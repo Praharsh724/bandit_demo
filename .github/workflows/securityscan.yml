@@ -24,10 +24,11 @@ jobs:
 
       - name: Run Bandit (Allow Warnings)
         run: |
-          # Generate JSON report (don't fail build if issues are found)
-          bandit -r . --severity-level high -f json -o bandit-report.json || true
-          # Generate HTML report
-          bandit -r . -f html -o bandit-report.html || true
+          set +e
+          echo "Running Bandit security scan..."
+          bandit -r . --severity-level high -f json -o bandit-report.json
+          bandit -r . -f html -o bandit-report.html
+          echo "Bandit scan completed. Reports generated."
 
       - name: Upload Reports
         uses: actions/upload-artifact@v4
